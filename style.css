@@ -1,0 +1,25 @@
+body {
+    background-image: url("greyblock50.png");
+    background-repeat: repeat;
+    width: 10000px;/*Idea: Increate play area based on number of players*/
+    height: 10000px;
+    overflow: hidden;
+}
+
+#coords {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    color: red;
+}
+
+button {
+    position: fixed;
+    left: 60px;
+    top: 20px;
+    color: red;
+}
+
+canvas {
+    border: 3px solid red;
+}
