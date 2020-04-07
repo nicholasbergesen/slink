@@ -3,7 +3,7 @@ body {
     background-repeat: repeat;
     width: 10000px;/*Idea: Increate play area based on number of players*/
     height: 10000px;
-    overflow: hidden;
+    overflow: auto;
 }
 
 #coords {

@@ -1,5 +1,4 @@
 'use strict'
-const ctx = document.getElementById(canvasId).getContext('2d');
 const totalWidth = 10000;
 const totalHeight = 10000;
 
@@ -11,6 +10,7 @@ const clientCenterY = (window.innerHeight / 2);
 const canvasId = "canvas";
 const velocity = 2;
 const fps = 24;
+var ctx = document.getElementById(canvasId).getContext('2d');
 
 let mouseClientX = clientCenterX;
 let mouseClientY = clientCenterY;
@@ -51,10 +51,12 @@ function snake(segments) {
         this.segments.push(new segment(head.x + x, head.y + y))
     }
     this.draw = function() {
-        segments[0].draw(true);//head
+        let head = segments[0];
+        head.draw(true);//head
         for (let i = 1; i < segments.length; i++) {
-            segments[index].draw(false);
+            segments[i].draw(false);
         }
+        window.scrollTo(head.x, head.y);
     }
 };
 
@@ -77,19 +79,14 @@ function drawAll() {
     moveX *= -1;
     moveY *= -1;
 
-    snakeItem.x += moveX;
-    snakeItem.y += moveY;
-
     //will need to change when remote snakes are included.
     for (let i = 0; i < snakes.length; i++) {
         const snakeItem = snakes[i];
         snakeItem.move(moveX, moveY);
         snakeItem.draw();
-
-        window.scrollTo(snakeItem.x, snakeItem.y);
     }
 
-    window.requestAnimationFrame(drawAll);
+    setTimeout(function () { window.requestAnimationFrame(drawAll); }, 1000 / fps);
 }
 
 function onLoad() {
@@ -111,6 +108,7 @@ function showCoOrdinates(event) {
     var span = document.getElementById("coords");
     span.innerHTML = "Page:(" + event.pageX + "," + event.pageY + "), Client:(" + event.clientX + "," + event.clientY + ")";
 
+    //todo: remove this use gradient.
     movingUp = event.clientY < (window.innerHeight / 2);
     movingLeft = event.clientX < (window.innerWidth / 2);
 
