@@ -1,9 +1,11 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
 body {
     background-image: url("greyblock50.png");
     background-repeat: repeat;
-    width: 10000px;/*Idea: Increate play area based on number of players*/
-    height: 10000px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 #coords {
@@ -21,5 +23,5 @@ button {
 }
 
 canvas {
-    border: 3px solid red;
+    border: 1px solid red;
 }
