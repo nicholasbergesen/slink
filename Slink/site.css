@@ -16,3 +16,13 @@ button {
     top: 20px;
     color: red;
 }
+
+#canvas {
+    visibility:hidden;
+}
+
+#overlay {
+    width:inherit;
+    height:inherit;
+    position:center
+}

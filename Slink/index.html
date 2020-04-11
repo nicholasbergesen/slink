@@ -8,13 +8,23 @@
         gtag('js', new Date());
         gtag('config', 'UA-127709549-1');
     </script>
+    <script src="Scripts/jquery-3.4.1.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src='/signalr/js'></script>
+    <script src="slink.signalr.js"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="site.css" type="text/css" />
     <title>Slink</title>
 </head>
 <body onload="onLoad()">
+    <div id="overlay">
+        <label for="clientName">Name:</label>
+        <input type="text" id="clientName" />
+        <input type="button" onclick="start" name="Start" />
+    </div>
     <canvas id="canvas"></canvas>
-    <script src="slink.js"></script>
+    <script src="slink.models.js"></script>
+    <script src="slink.game.js"></script>
 </body>
 </html>
