@@ -22,44 +22,41 @@ namespace Slink
             _broadcaster = broadcaster;
         }
 
-        public void UpdatePosition(ClientInfo client)
+        public void UpdatePosition(Snake snake)
         {
-            client.ConnectionId = Context.ConnectionId;
-            client.Updated = true;
-            _broadcaster.UpdatePosition(client);
+            snake.ConnectionId = Context.ConnectionId;
+            snake.Updated = true;
+            _broadcaster.UpdatePosition(snake);
         }
 
-        public void Register(ClientInfo newclient)
+        public void Register(Snake newSnake)
         {
-            newclient.ConnectionId = Context.ConnectionId;
-            _broadcaster.Register(newclient);
+            newSnake.ConnectionId = Context.ConnectionId;
+            _broadcaster.Register(newSnake);
         }
     }
 
-    public class Position
+    public class Snake
     {
-        [JsonProperty("X")]
-        public double X { get; set; }
-
-        [JsonProperty("Y")]
-        public double Y { get; set; }
-    }
-
-    public class ClientInfo
-    {
-        [JsonProperty("position")]
-        public Position Position { get; set; }
-
         [JsonProperty("clientName")]
-        public string ClientName { get; set; }
+        public string Name { get; set; }
+
+        [JsonProperty("moveX")]
+        public double MoveX { get; set; }
+
+        [JsonProperty("moveY")]
+        public double MoveY { get; set; }
 
         [JsonProperty("isAccelerating")]
         public bool IsAccelerating { get; set; }
 
+        [JsonProperty("segments")]
+        public List<double> Segments { get; set; }
+
         [JsonIgnore]
         public bool Updated { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("connectionId")]
         public string ConnectionId { get; set; }
     }
 
@@ -69,31 +66,31 @@ namespace Slink
         private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second
         private readonly IHubContext _hubContext;
         private readonly Timer _broadcastLoop;
-        private static ConcurrentDictionary<string, ClientInfo> _clients = new ConcurrentDictionary<string, ClientInfo>();
+        private static ConcurrentDictionary<string, Snake> _snakes = new ConcurrentDictionary<string, Snake>();
 
         public Broadcaster()
         {
             _hubContext = GlobalHost.ConnectionManager.GetHubContext<SlinkHub>();
-            _broadcastLoop = new Timer(UpdatePositions, null, BroadcastInterval, BroadcastInterval);
+            _broadcastLoop = new Timer(BroadcastPositions, null, BroadcastInterval, BroadcastInterval);
         }
 
-        public void UpdatePositions(object state)
+        public void BroadcastPositions(object state)
         {
-            var updatedClient = _clients.Values.Where(x => x.Updated).ToList();
+            var updatedClient = _snakes.Values.Where(x => x.Updated).ToList();
             if (updatedClient.Any())
             {
                 _hubContext.Clients.All.UpdatePositions(updatedClient);
             }
         }
-        public void UpdatePosition(ClientInfo client)
+        public void UpdatePosition(Snake client)
         {
-            _clients[client.ConnectionId] = client;
+            _snakes[client.ConnectionId] = client;
         }
 
-        internal void Register(ClientInfo client)
+        internal void Register(Snake client)
         {
-            if(_clients.TryAdd(client.ConnectionId, client))
-                _hubContext.Clients.AllExcept(client.ConnectionId).AddClient(client);
+            if(_snakes.TryAdd(client.ConnectionId, client))
+                _hubContext.Clients.AllExcept(client.ConnectionId).AddSnake(client);
         }
 
         public static Broadcaster Instance

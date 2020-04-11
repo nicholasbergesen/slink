@@ -30,9 +30,11 @@ class snake {
         this.name = name;
         this.segments = segments;
         this.velocity = velocity;
+        this.isAccelerating = false;
     }
 
     setAcceleration(isAccelerating) {
+        this.isAccelerating = isAccelerating;
         if (isAccelerating) {
             this.velocity = standardVelocity * speedBoostFactor;
         }
@@ -101,6 +103,20 @@ class snake {
             x: moveX,
             y: moveY
         };
+    }
+
+    toHubObject() {
+        return {
+            clientName: this.name,
+            moveX: this.moveX,
+            moveY: this.moveY,
+            isAccelerating: this.isAccelerating
+        }
+    }
+
+    static newHubSnake(name, segments, x, y) {
+        snake(name, segments, standardVelocity);
+        newSnake.setMoveDirection(x, y);
     }
 
     static newSnake(name, startingPosition) {

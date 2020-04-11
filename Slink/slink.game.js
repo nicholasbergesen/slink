@@ -9,7 +9,6 @@ const standardVelocity = 4;
 const speedBoostFactor = 2;
 
 const fps = 40;
-const slinkHub = new slinkHubR();
 const overlay = document.getElementById("overlay");
 
 let snakes = [];
@@ -17,6 +16,12 @@ let mySnake;
 let ctx = document.getElementById(canvasId).getContext('2d');
 
 function start() {
+
+    //check if hub has started every 100 ms.
+    while (!isLoaded) {
+        setTimeout(start, 100);
+    }
+
     document.getElementById("overlay").style.visibility = "hidden";
     document.getElementById(canvasId).style.visibility = "visible";
     let clientNameText = clientName.value;
@@ -25,9 +30,9 @@ function start() {
     let startingPosition = getStartPosition();
     window.scrollTo(startingPosition.x, startingPosition.y);
     mySnake = snake.newSnake(clientNameText, startingPosition, standardVelocity);
-    snakes.push(mySnake);
-    //slinkHub.server.updateModel({ left: 1, top: 2 });
+    slinkHub.register();
     drawAll();
+    slinkHub.updateServer();
 }
 
 function getStartPosition() {
@@ -63,6 +68,9 @@ function drawAll() {
         snakeItem.move();
         snakeItem.draw();
     }
+
+    mySnake.move();
+    mySnake.draw();
 
     setTimeout(function () { window.requestAnimationFrame(drawAll); }, 1000 / fps);
 }
