@@ -6,12 +6,14 @@ const halfWindowWidth = (window.innerWidth / 2);
 const halfWindowHeight = (window.innerHeight / 2);
 
 const standardVelocity = 4;
+const speedBoostFactor = 2;
+
 const fps = 40;
 const slinkHub = new slinkHubR();
 const overlay = document.getElementById("overlay");
 
-let velocity = standardVelocity;
 let snakes = [];
+let mySnake;
 let ctx = document.getElementById(canvasId).getContext('2d');
 
 function start() {
@@ -22,8 +24,8 @@ function start() {
 
     let startingPosition = getStartPosition();
     window.scrollTo(startingPosition.x, startingPosition.y);
-    var newSnake = snake.newSnake(clientNameText, startingPosition);
-    snakes.push(newSnake);
+    mySnake = snake.newSnake(clientNameText, startingPosition, standardVelocity);
+    snakes.push(mySnake);
     //slinkHub.server.updateModel({ left: 1, top: 2 });
     drawAll();
 }
@@ -31,7 +33,6 @@ function start() {
 function getStartPosition() {
     let startingWeight = Math.random();
 
-    //prevent starting more than half a screen width to the edge.
     let startX = (startingWeight * window.innerWidth);
     if (startX < halfWindowWidth) {
         startX += halfWindowWidth
@@ -57,43 +58,11 @@ function getStartPosition() {
 function drawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    //will need to change when remote snakes are included.
     for (let i = 0; i < snakes.length; i++) {
         const snakeItem = snakes[i];
-        let head = snakeItem.segments[0];
-        var move = calculateMoveTo(head.x, head.y, mousePageX, mousePageY, velocity);
-        snakeItem.moveBy(move.x, move.y);
+        snakeItem.move();
         snakeItem.draw();
     }
 
     setTimeout(function () { window.requestAnimationFrame(drawAll); }, 1000 / fps);
-}
-
-//eq1:y = ax; (a is gradient between the 2 points)
-//eq2: x² + y² = r²
-//Use y in eq 1 to solve for x in eq 2, r is velovity (position you want to move to).
-function calculateMoveTo(originx, originy, targetx, targety, r) {
-    const yposition = (targety - originy);
-    const xposition = (targetx - originx);
-
-    var gradient = yposition / xposition;
-
-    if(Number.isNaN(gradient)) {
-        gradient = 0;
-    }
-
-    let moveX = r / Math.sqrt(Math.pow(gradient, 2) + 1);
-    let moveY = Math.sqrt(Math.pow(r, 2) - Math.pow(moveX, 2));
-
-    if(yposition < 0) {
-        moveY *= -1;
-    }
-    if(xposition < 0) {
-        moveX *= -1;
-    }
-
-    return {
-        x: moveX,
-        y: moveY
-    };
 }

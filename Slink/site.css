@@ -9,7 +9,7 @@ body {
     background-color: #575F59;
     background-image: url("greyBlock50.png");
     background-repeat: repeat;
-    overflow: auto;
+    overflow: hidden;
 }
 
 input[type=button] {
@@ -18,6 +18,7 @@ input[type=button] {
 
 #canvas {
     visibility:hidden;
+    border: 5px solid red;
 }
 
 #overlay {
