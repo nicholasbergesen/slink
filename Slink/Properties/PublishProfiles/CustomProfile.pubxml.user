@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA14/BF/h0nUCXFu74X9y9GAAAAAACAAAAAAAQZgAAAAEAACAAAAA8JKLnmc7Sc1kqTe/PsJ4zF7KEiDiS3RBBSFXcTV7YQgAAAAAOgAAAAAIAACAAAACVDcqLzekfKqy+tA5E6AmL03Z+3jViARuchPbOTg3/VTAAAAAALy1cw5ZcmhjB3zz8LFKjwwBU0IfiL8QsExl7bOoeVhmlW2zj73nhCQGetcBKw4xAAAAAtfhYyU8Q4g7LEfXBlFXa58w97z9y0Na0JCNltKOnvR4kvqjXXKeZDAutM6D91ECLCZ7KB3vrigiLDmcoy2DNUw==</EncryptedPassword>
+    <_PublishTargetUrl>ftp://fpt.bergesen.co.za</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/greyblock100.png">
+      <publishTime>04/11/2020 08:15:27</publishTime>
+    </File>
+    <File Include="bin/greyBlock50.png">
+      <publishTime>04/11/2020 08:12:12</publishTime>
+    </File>
+    <File Include="bin/site.css">
+      <publishTime>04/11/2020 08:13:00</publishTime>
+    </File>
+    <File Include="bin/Slink.dll">
+      <publishTime>04/11/2020 08:28:41</publishTime>
+    </File>
+    <File Include="bin/Slink.pdb">
+      <publishTime>04/11/2020 08:28:41</publishTime>
+    </File>
+    <File Include="favicon.ico">
+      <publishTime>04/11/2020 08:12:23</publishTime>
+    </File>
+    <File Include="greyblock100.png">
+      <publishTime>04/11/2020 08:15:27</publishTime>
+    </File>
+    <File Include="greyBlock50.png">
+      <publishTime>04/11/2020 08:12:12</publishTime>
+    </File>
+    <File Include="index.html">
+      <publishTime>04/11/2020 08:12:52</publishTime>
+    </File>
+    <File Include="PrecompiledApp.config">
+      <publishTime>04/11/2020 08:28:54</publishTime>
+    </File>
+    <File Include="site.css">
+      <publishTime>04/11/2020 08:13:00</publishTime>
+    </File>
+    <File Include="slink.js">
+      <publishTime>04/11/2020 08:12:06</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>04/11/2020 08:28:54</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
