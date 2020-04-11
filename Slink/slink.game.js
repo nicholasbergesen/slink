@@ -1,79 +1,72 @@
 'use strict'
-const totalWidth = 3000;
-const totalHeight = 3000;
 
-const pageCenterX = (totalWidth / 2);
-const pageCenterY = (totalHeight / 2);
-const clientCenterX = (window.innerWidth / 2);
-const clientCenterY = (window.innerHeight / 2);
+const halfTotalWidth = (totalWidth / 2);
+const halfTotalHeight = (totalHeight / 2);
+const halfWindowWidth = (window.innerWidth / 2);
+const halfWindowHeight = (window.innerHeight / 2);
 
-const canvasId = "canvas";
 const standardVelocity = 4;
-const segmentRadius = 30;
 const fps = 40;
+const slinkHub = new slinkHubR();
+const overlay = document.getElementById("overlay");
 
 let velocity = standardVelocity;
-let mouseClientX = clientCenterX;
-let mouseClientY = clientCenterY;
 let snakes = [];
-var ctx = document.getElementById(canvasId).getContext('2d');
+let ctx = document.getElementById(canvasId).getContext('2d');
 
-function setCanvasSize() {
-    let canvas = document.getElementById(canvasId);
-    canvas.width = totalWidth;
-    canvas.height = totalHeight;
+function start() {
+    document.getElementById("overlay").style.visibility = "hidden";
+    document.getElementById(canvasId).style.visibility = "visible";
+    let clientNameText = clientName.value;
+    overlay.parentElement.removeChild(overlay);
+
+    let startingPosition = getStartPosition();
+    window.scrollTo(startingPosition.x, startingPosition.y);
+    var newSnake = snake.newSnake(clientNameText, startingPosition);
+    snakes.push(newSnake);
+    //slinkHub.server.updateModel({ left: 1, top: 2 });
+    drawAll();
+}
+
+function getStartPosition() {
+    let startingWeight = Math.random();
+
+    //prevent starting more than half a screen width to the edge.
+    let startX = (startingWeight * window.innerWidth);
+    if (startX < halfWindowWidth) {
+        startX += halfWindowWidth
+    }
+    else if (startX > window.innerWidth - halfWindowWidth) {
+        startX -= halfWindowWidth;
+    }
+
+    let startY = (startingWeight * window.innerHeight);
+    if (startY < halfWindowHeight) {
+        startY += halfWindowHeight
+    }
+    else if (startY > window.innerHeight - halfWindowHeight) {
+        startY -= halfWindowHeight;
+    }
+
+    return {
+        x: startX,
+        y: startY
+    };
 }
 
 function drawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     //will need to change when remote snakes are included.
     for (let i = 0; i < snakes.length; i++) {
         const snakeItem = snakes[i];
-        var move = calculateMoveTo(clientCenterX, clientCenterY, mouseClientX, mouseClientY, velocity);
-        snakeItem.move(move.x, move.y);
+        let head = snakeItem.segments[0];
+        var move = calculateMoveTo(head.x, head.y, mousePageX, mousePageY, velocity);
+        snakeItem.moveBy(move.x, move.y);
         snakeItem.draw();
     }
 
     setTimeout(function () { window.requestAnimationFrame(drawAll); }, 1000 / fps);
-}
-
-function onLoad() {
-    setCanvasSize();
-    document.onmousemove = (e) => showCoOrdinates(e);
-    document.onmousedown = (e) => accelerate(e);
-    document.onmouseup = (e) => normalSleed(e);
-
-    window.scrollTo(pageCenterX - clientCenterX, pageCenterY - clientCenterY);
-
-    var segments = [];
-    for (let i = 0; i < 50; i++) {
-        segments.push(new segment(pageCenterX, pageCenterY + (i * velocity)));
-    }
-    snakes.push(new snake(segments));
-    drawAll();
-
-    slinkHub.server.updateModel({ left: 1, top: 2 });
-}
-
-function showCoOrdinates(event) {
-    mouseClientX = event.clientX;
-    mouseClientY = event.clientY;
-}
-
-function accelerate(event) {
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    ctx.shadowBlur = 2;
-    ctx.shadowColor = "orange";
-    velocity *= 2;
-}
-
-function normalSleed(event) {
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.shadowBlur = 0;
-    velocity = standardVelocity;
 }
 
 //eq1:y = ax; (a is gradient between the 2 points)

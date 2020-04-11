@@ -1,9 +1,12 @@
-﻿class slinkHubR {
+﻿'use strict'
+
+let isLoaded = false;
+
+class slinkHubR {
     constructor() {
-        this.isLoaded = false;
         this.slinkHub = $.connection.slinkHub;
         $.connection.hub.start().done(function () {
-            this.isLoaded = true;
+            isLoaded = true;
         });
     }
 

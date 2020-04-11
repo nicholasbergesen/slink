@@ -107,6 +107,7 @@
     </Content>
     <Content Include="slink.game.js" />
     <Content Include="slink.signalr.js" />
+    <Content Include="slink.site.js" />
     <Content Include="Web.config" />
     <Content Include="slink.models.js" />
   </ItemGroup>

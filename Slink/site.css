@@ -1,20 +1,19 @@
 ﻿* {
     margin: 0px;
     padding: 0px;
+    font-family:Arial;
+    font-size:14pt;
 }
 
 body {
     background-color: #575F59;
     background-image: url("greyBlock50.png");
     background-repeat: repeat;
-    overflow: hidden;
+    overflow: auto;
 }
 
-button {
-    position: fixed;
-    left: 60px;
-    top: 20px;
-    color: red;
+input[type=button] {
+    padding: 2px 5px;
 }
 
 #canvas {
@@ -22,7 +21,8 @@ button {
 }
 
 #overlay {
-    width:inherit;
-    height:inherit;
-    position:center
+    height: 100vh;
+    height: 100vw;
+    padding-top:50vh;
+    text-align:center;
 }
