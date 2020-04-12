@@ -1,4 +1,4 @@
-﻿'use strict'
+﻿"use strict"
 
 const totalWidth = 5000;
 const totalHeight = 5000;
@@ -16,7 +16,6 @@ function onLoad() {
     canvas.onmouseup = (e) => normalSpeed(e);
     clientName.onkeyup = (e) => onKeyUp(e);
     clientName.focus();
-
 }
 
 function updateCoOrdinates(event) {

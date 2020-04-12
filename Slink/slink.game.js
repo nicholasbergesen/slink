@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 
 const halfTotalWidth = (totalWidth / 2);
 const halfTotalHeight = (totalHeight / 2);
@@ -11,14 +11,13 @@ const speedBoostFactor = 2;
 const fps = 40;
 const overlay = document.getElementById("overlay");
 
-let snakes = [];
-let mySnake;
+let mySnake = {};
 let ctx = document.getElementById(canvasId).getContext('2d');
 
 function start() {
 
     //check if hub has started every 100 ms.
-    while (!isLoaded) {
+    while (!slinkHub.isLoaded) {
         setTimeout(start, 100);
     }
 
@@ -30,9 +29,16 @@ function start() {
     let startingPosition = getStartPosition();
     window.scrollTo(startingPosition.x, startingPosition.y);
     mySnake = snake.newSnake(clientNameText, startingPosition, standardVelocity);
-    slinkHub.register();
+    slinkHub.registerNewSnake(mySnake);
+    //pollServer();
+    slinkHub.updateServer(mySnake);
+
     drawAll();
-    slinkHub.updateServer();
+}
+
+function pollServer() {
+    slinkHub.updateServer(mySnake);
+    setTimeout(pollServer, updateRate);
 }
 
 function getStartPosition() {
@@ -63,13 +69,14 @@ function getStartPosition() {
 function drawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < snakes.length; i++) {
-        const snakeItem = snakes[i];
+    for (let i = 0; i < remoteSnakes.length; i++) {
+        const snakeItem = remoteSnakes[i];
         snakeItem.move();
         snakeItem.draw();
     }
 
     mySnake.move();
+    slinkHub.updateServer(mySnake);
     mySnake.draw();
 
     setTimeout(function () { window.requestAnimationFrame(drawAll); }, 1000 / fps);

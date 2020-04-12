@@ -1,4 +1,4 @@
-﻿'use strict'
+﻿"use strict"
 
 const segmentRadius = 30;
 const startingSize = 50;
@@ -105,18 +105,37 @@ class snake {
         };
     }
 
-    toHubObject() {
-        return {
-            clientName: this.name,
-            moveX: this.moveX,
-            moveY: this.moveY,
-            isAccelerating: this.isAccelerating
+    toHubObject(includeSegments) {
+        if (includeSegments) {
+            return {
+                name: this.name,
+                moveX: this.moveX,
+                moveY: this.moveY,
+                isAccelerating: this.isAccelerating,
+                segments: this.segments
+            };
+        }
+        else {
+            return {
+                name: this.name,
+                moveX: this.moveX,
+                moveY: this.moveY,
+                isAccelerating: this.isAccelerating,
+            };
         }
     }
 
     static newHubSnake(name, segments, x, y) {
-        snake(name, segments, standardVelocity);
+        var classSegments = [];
+
+        for (let i = 0; i < segments.length; i++) {
+            const curSeg = segments[i];
+            classSegments.push(new segment(curSeg.x, curSeg.y + (i * standardVelocity)));
+        }
+
+        let newSnake = new snake(name, classSegments, standardVelocity);
         newSnake.setMoveDirection(x, y);
+        return newSnake;
     }
 
     static newSnake(name, startingPosition) {

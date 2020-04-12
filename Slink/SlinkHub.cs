@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Slink
 {
@@ -24,40 +24,40 @@ namespace Slink
 
         public void UpdatePosition(Snake snake)
         {
-            snake.ConnectionId = Context.ConnectionId;
-            snake.Updated = true;
+            snake.connectionId = Context.ConnectionId;
+            snake.updated = true;
             _broadcaster.UpdatePosition(snake);
         }
 
         public void Register(Snake newSnake)
         {
-            newSnake.ConnectionId = Context.ConnectionId;
+            newSnake.connectionId = Context.ConnectionId;
             _broadcaster.Register(newSnake);
         }
     }
 
     public class Snake
     {
-        [JsonProperty("clientName")]
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        [JsonProperty("moveX")]
-        public double MoveX { get; set; }
+        public double moveX { get; set; }
 
-        [JsonProperty("moveY")]
-        public double MoveY { get; set; }
+        public double moveY { get; set; }
 
-        [JsonProperty("isAccelerating")]
-        public bool IsAccelerating { get; set; }
+        public bool isAccelerating { get; set; }
 
-        [JsonProperty("segments")]
-        public List<double> Segments { get; set; }
+        public List<Segment> segments { get; set; }
 
-        [JsonIgnore]
-        public bool Updated { get; set; }
+        public bool updated { get; set; }
 
-        [JsonProperty("connectionId")]
-        public string ConnectionId { get; set; }
+        public string connectionId { get; set; }
+    }
+
+    public class Segment
+    {
+        public double x { get; set; }
+
+        public double y { get; set; }
     }
 
     public class Broadcaster
@@ -66,7 +66,7 @@ namespace Slink
         private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second
         private readonly IHubContext _hubContext;
         private readonly Timer _broadcastLoop;
-        private static ConcurrentDictionary<string, Snake> _snakes = new ConcurrentDictionary<string, Snake>();
+        private readonly static ConcurrentDictionary<string, Snake> _snakes = new ConcurrentDictionary<string, Snake>();
 
         public Broadcaster()
         {
@@ -76,21 +76,35 @@ namespace Slink
 
         public void BroadcastPositions(object state)
         {
-            var updatedClient = _snakes.Values.Where(x => x.Updated).ToList();
-            if (updatedClient.Any())
+            var remoteSnakes = _snakes.Values.Where(x => x.updated);
+            if (remoteSnakes.Any())
             {
-                _hubContext.Clients.All.UpdatePositions(updatedClient);
+                _hubContext.Clients.All.updatePositions(remoteSnakes);
             }
         }
         public void UpdatePosition(Snake client)
         {
-            _snakes[client.ConnectionId] = client;
+            _snakes[client.connectionId] = client;
         }
 
         internal void Register(Snake client)
         {
-            if(_snakes.TryAdd(client.ConnectionId, client))
-                _hubContext.Clients.AllExcept(client.ConnectionId).AddSnake(client);
+            //var copy = new Snake()
+            //{
+            //    connectionId = "Fake snake",
+            //    isAccelerating = client.isAccelerating,
+            //    moveY = client.moveY,
+            //    moveX = client.moveX,
+            //    segments = client.segments,
+            //    name = "no u",
+            //    updated = true
+            //};
+            //copy.segments[0].x += 50;
+            //_snakes.TryAdd(copy.connectionId, copy);
+            //_hubContext.Clients.All.addSnake(copy);
+
+            if (_snakes.TryAdd(client.connectionId, client))
+                _hubContext.Clients.AllExcept(client.connectionId).addSnake(client);
         }
 
         public static Broadcaster Instance
