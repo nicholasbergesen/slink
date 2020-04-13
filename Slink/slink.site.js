@@ -19,14 +19,30 @@ function onLoad() {
     clientName.focus();
 }
 
+let isUpdating = false;
+let lastX = 0;
+let lastY = 0;
+
 function updateCoOrdinates(event) {
-    //add a slight delay to this. (debounce, to prevent update spam)
+    //added a delay to posting updated positions to help
+    //keep co-ordinates in  sync with other clients.
     if (mySnake != undefined) {
-        mySnake.setMoveDirection(event.pageX, event.pageY);
+        if (!isUpdating) {
+            isUpdating = true;
+
+            setTimeout(function () {
+                mySnake.setMoveDirection(lastX, lastY);
+                isUpdating = false;
+            }, 100);
+        } else {
+            lastX = event.pageX;
+            lastY = event.pageY;
+        }
     }
 }
 
 function accelerate(event) {
+    //make the accelerate affects snake specific.
     ctx.shadowOffsetX = 2;
     ctx.shadowOffsetY = 2;
     ctx.shadowBlur = 2;
