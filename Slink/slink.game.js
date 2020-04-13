@@ -15,7 +15,6 @@ let mySnake = {};
 let ctx = document.getElementById(canvasId).getContext('2d');
 
 function start() {
-
     //check if hub has started every 100 ms.
     while (!slinkHub.isLoaded) {
         setTimeout(start, 100);

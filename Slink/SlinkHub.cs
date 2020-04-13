@@ -41,6 +41,12 @@ namespace Slink
             _broadcaster.RemoveSnake(Context.ConnectionId);
             return base.OnDisconnected(stopCalled);
         }
+
+        public override async Task OnConnected()
+        {
+            await base.OnConnected();
+            Clients.Client(Context.ConnectionId).addSnakes(Broadcaster.Snakes.Values);
+        }
     }
 
     public class Snake
@@ -73,7 +79,7 @@ namespace Slink
         private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second, client runs at 24 fps
         private readonly IHubContext _hubContext;
         private readonly Timer _broadcastLoop;
-        private readonly static ConcurrentDictionary<string, Snake> _snakes = new ConcurrentDictionary<string, Snake>();
+        public readonly static ConcurrentDictionary<string, Snake> Snakes = new ConcurrentDictionary<string, Snake>();
 
         public Broadcaster()
         {
@@ -83,7 +89,7 @@ namespace Slink
 
         public void BroadcastPositions(object state)
         {
-            var remoteSnakes = _snakes.Values.Where(x => x.updated);
+            var remoteSnakes = Snakes.Values.ToList();
             if (remoteSnakes.Any())
             {
                 _hubContext.Clients.All.updatePositions(remoteSnakes);
@@ -91,18 +97,14 @@ namespace Slink
         }
         public void UpdatePosition(Snake client)
         {
-            _snakes[client.connectionId] = client;
+            Snakes[client.connectionId] = client;
         }
 
         internal string Register(Snake client)
         {
-            if (_snakes.TryAdd(client.connectionId, client))
+            if (Snakes.TryAdd(client.connectionId, client))
             {
                 _hubContext.Clients.AllExcept(client.connectionId).addSnake(client);
-
-                var remoteSnakes = _snakes.Values.Where(x => x.connectionId != client.connectionId);
-                _hubContext.Clients.Client(client.connectionId).addSnakes(remoteSnakes);
-
                 return client.connectionId;
             }
 
@@ -111,7 +113,8 @@ namespace Slink
 
         internal void RemoveSnake(string connectionId)
         {
-            _hubContext.Clients.All.removeSnake(connectionId);
+            if(Snakes.TryRemove(connectionId, out _))
+                _hubContext.Clients.All.removeSnake(connectionId);
         }
 
         public static Broadcaster Instance
