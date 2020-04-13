@@ -68,7 +68,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/13/2020 12:44:50</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>04/13/2020 12:50:00</publishTime>
+      <publishTime>04/13/2020 13:12:47</publishTime>
     </File>
     <File Include="Scripts/jquery-3.4.1.js">
       <publishTime>04/11/2020 08:30:03</publishTime>
@@ -107,10 +107,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/13/2020 11:39:55</publishTime>
     </File>
     <File Include="slink.signalr.js">
-      <publishTime>04/13/2020 12:47:43</publishTime>
+      <publishTime>04/13/2020 13:12:17</publishTime>
     </File>
     <File Include="slink.site.js">
-      <publishTime>04/13/2020 12:28:40</publishTime>
+      <publishTime>04/13/2020 13:11:38</publishTime>
     </File>
     <File Include="Web.config">
       <publishTime>04/11/2020 15:10:05</publishTime>
