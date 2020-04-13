@@ -1,10 +1,10 @@
 ﻿"use strict"
 
-const updateFrequency = 10;
+const updateFrequency = 25; //same as server broadcast. 1 more than the fps
 const updateRate = 1000 / updateFrequency;
 let remoteSnakes = [];
 
-//make some ui regarding user diconnects/ slow connection indications.
+//make some ui regarding user diconnects/slow connection indications.
 class slinkHubR {
     constructor() {
         this._isLoaded = false;
@@ -13,36 +13,44 @@ class slinkHubR {
 
         this.myHubProxy.client.updatePositions = this.updatePositions;
         this.myHubProxy.client.addSnake = this.addSnake;
+        this.myHubProxy.client.addSnakes = this.addSnakes;
+        this.myHubProxy.client.removeSnake = this.removeSnake;
 
-        var connection = $.hubConnection();
-        connection.error(function (error) {
+        $.hubConnection().error(function (error) {
             console.log('SignalR error: ' + error)
         });
 
+        //connect to hub.
         $.connection.hub.start()
-            .done(function (e) {
-                that._isLoaded = true;
-                console.log("Connected");
-                console.log(e);
-            })
-            .fail(function () {
-                console.log("failed to connect");
-                console.log(e);
-            });
-
-        $.connection.hub.disconnected(function () {
-            console.log("disconnected");
-            setTimeout(function () {
-                console.log("reconnecting...");
-                $.connection.hub.start()
-                    .done(function () { console.log("reconnected."); })
-                    .fail(function () { console.log("failed to reconnect."); });
-            }, 5000);
+        .done(function (e) {
+            that._isLoaded = true;
+            console.log("Connected");
+            console.log(e);
+        })
+        .fail(function () {
+            console.log("failed to connect");
+            console.log(e);
         });
+
+        $.connection.hub.disconnected = this.reconnect();
     }
 
     addSnake(newSnake) {
-        remoteSnakes.push(snake.newHubSnake(newSnake.name, newSnake.segments, newSnake.moveX, newSnake.moveY));
+        remoteSnakes.push(snake.newRemoteSnake(newSnake.connectionId, newSnake.name, newSnake.segments, newSnake.moveX, newSnake.moveY));
+    }
+
+    addSnakes(newSnakes) {
+        for (var i = 0; i < newSnakes; i++) {
+            let newSnake = newSnakes[i];
+            remoteSnakes.push(snake.newRemoteSnake(newSnake.connectionId, newSnake.name, newSnake.segments, newSnake.moveX, newSnake.moveY));
+        }
+    }
+
+    removeSnake(removeSnakeId) {
+        for (var i = 0; i < remoteSnake; i++) {
+            if (remoteSnakes[i].snakeId === removeSnakeId)
+                remoteSnakes.splice(i, 1);
+        }
     }
 
     updatePositions(snakeUpdates) {
@@ -53,13 +61,24 @@ class slinkHubR {
             });;
             if (remoteSnake) {
                 currentSnake.setAcceleration(remoteSnake.isAccelerating);
-                currentSnake.setMoveDirection(remoteSnake.moveX, remoteSnake.moveY);
+                currentSnake.moveX = remoteSnake.moveX;
+                currentSnake.moveY = remoteSnake.moveY;
             }
             else {
                 //remove snake from the collection if its not longer returned from the server.
                 //(snake died, explode into little snake food)
             }
         }
+    }
+
+    reconnect() {
+        console.log("disconnected");
+        //setTimeout(function () {
+        //    console.log("reconnecting...");
+        //    $.connection.hub.start()
+        //        .done(function () { console.log("reconnected."); })
+        //        .fail(function () { console.log("failed to reconnect."); });
+        //}, 5000);
     }
 
     get isLoaded() {

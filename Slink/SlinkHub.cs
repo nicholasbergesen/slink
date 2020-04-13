@@ -6,6 +6,7 @@ using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace Slink
 {
@@ -29,10 +30,16 @@ namespace Slink
             _broadcaster.UpdatePosition(snake);
         }
 
-        public void Register(Snake newSnake)
+        public string Register(Snake newSnake)
         {
             newSnake.connectionId = Context.ConnectionId;
-            _broadcaster.Register(newSnake);
+            return _broadcaster.Register(newSnake);
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            _broadcaster.RemoveSnake(Context.ConnectionId);
+            return base.OnDisconnected(stopCalled);
         }
     }
 
@@ -63,7 +70,7 @@ namespace Slink
     public class Broadcaster
     {
         private readonly static Lazy<Broadcaster> _instance = new Lazy<Broadcaster>(() => new Broadcaster());
-        private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second
+        private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second, client runs at 24 fps
         private readonly IHubContext _hubContext;
         private readonly Timer _broadcastLoop;
         private readonly static ConcurrentDictionary<string, Snake> _snakes = new ConcurrentDictionary<string, Snake>();
@@ -87,24 +94,24 @@ namespace Slink
             _snakes[client.connectionId] = client;
         }
 
-        internal void Register(Snake client)
+        internal string Register(Snake client)
         {
-            //var copy = new Snake()
-            //{
-            //    connectionId = "Fake snake",
-            //    isAccelerating = client.isAccelerating,
-            //    moveY = client.moveY,
-            //    moveX = client.moveX,
-            //    segments = client.segments,
-            //    name = "no u",
-            //    updated = true
-            //};
-            //copy.segments[0].x += 50;
-            //_snakes.TryAdd(copy.connectionId, copy);
-            //_hubContext.Clients.All.addSnake(copy);
-
             if (_snakes.TryAdd(client.connectionId, client))
+            {
                 _hubContext.Clients.AllExcept(client.connectionId).addSnake(client);
+
+                var remoteSnakes = _snakes.Values.Where(x => x.connectionId != client.connectionId);
+                _hubContext.Clients.Client(client.connectionId).addSnakes(remoteSnakes);
+
+                return client.connectionId;
+            }
+
+            return string.Empty;
+        }
+
+        internal void RemoveSnake(string connectionId)
+        {
+            _hubContext.Clients.All.removeSnake(connectionId);
         }
 
         public static Broadcaster Instance

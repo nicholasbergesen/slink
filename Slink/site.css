@@ -19,6 +19,7 @@ input[type=button] {
 #canvas {
     visibility:hidden;
     border: 5px solid red;
+    z-index: 1;
 }
 
 #overlay {
@@ -26,4 +27,14 @@ input[type=button] {
     height: 100vw;
     padding-top:50vh;
     text-align:center;
+    z-index:3;
+}
+
+#status {
+    position:fixed;
+    left: 2vh;
+    top: 95vh;
+    color:dimgray;
+    font-size: 11pt;
+    z-index: 2;
 }

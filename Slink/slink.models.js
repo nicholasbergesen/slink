@@ -26,11 +26,12 @@ class segment {
 }
 
 class snake {
-    constructor(name, segments, velocity) {
+    constructor(connectionId, name, segments, velocity) {
         this.name = name;
         this.segments = segments;
         this.velocity = velocity;
         this.isAccelerating = false;
+        this.connectionId = connectionId;
     }
 
     setAcceleration(isAccelerating) {
@@ -125,7 +126,11 @@ class snake {
         }
     }
 
-    static newHubSnake(name, segments, x, y) {
+    setId(snakeId) {
+        this.connectionId = snakeId;
+    }
+
+    static newRemoteSnake(connectionId, name, segments, x, y) {
         var classSegments = [];
 
         for (let i = 0; i < segments.length; i++) {
@@ -133,7 +138,7 @@ class snake {
             classSegments.push(new segment(curSeg.x, curSeg.y + (i * standardVelocity)));
         }
 
-        let newSnake = new snake(name, classSegments, standardVelocity);
+        let newSnake = new snake(connectionId, name, classSegments, standardVelocity);
         newSnake.setMoveDirection(x, y);
         return newSnake;
     }
@@ -145,7 +150,7 @@ class snake {
             segments.push(new segment(startingPosition.x, startingPosition.y + (i * standardVelocity)));
         }
 
-        let newSnake = new snake(name, segments, standardVelocity);
+        let newSnake = new snake("", name, segments, standardVelocity);
         newSnake.setMoveDirection(startingPosition.x, startingPosition.y);
         return newSnake;
     }

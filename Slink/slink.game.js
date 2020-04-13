@@ -8,7 +8,7 @@ const halfWindowHeight = (window.innerHeight / 2);
 const standardVelocity = 4;
 const speedBoostFactor = 2;
 
-const fps = 40;
+const fps = 24;
 const overlay = document.getElementById("overlay");
 
 let mySnake = {};
@@ -29,10 +29,10 @@ function start() {
     let startingPosition = getStartPosition();
     window.scrollTo(startingPosition.x, startingPosition.y);
     mySnake = snake.newSnake(clientNameText, startingPosition, standardVelocity);
-    slinkHub.registerNewSnake(mySnake);
-    //pollServer();
-    slinkHub.updateServer(mySnake);
 
+    let snakeId = slinkHub.registerNewSnake(mySnake); //this will cause the server to send remote snakes to the client in a separate call.
+    mySnake.setId(snakeId);
+    pollServer();
     drawAll();
 }
 
@@ -44,19 +44,19 @@ function pollServer() {
 function getStartPosition() {
     let startingWeight = Math.random();
 
-    let startX = (startingWeight * window.innerWidth);
-    if (startX < halfWindowWidth) {
+    let startX = (startingWeight * totalWidth);
+    if (startX < halfWindowHeight) {
         startX += halfWindowWidth
     }
-    else if (startX > window.innerWidth - halfWindowWidth) {
+    else if (startX > totalWidth - halfWindowWidth) {
         startX -= halfWindowWidth;
     }
 
-    let startY = (startingWeight * window.innerHeight);
+    let startY = (startingWeight * totalHeight);
     if (startY < halfWindowHeight) {
         startY += halfWindowHeight
     }
-    else if (startY > window.innerHeight - halfWindowHeight) {
+    else if (startY > totalHeight - halfWindowHeight) {
         startY -= halfWindowHeight;
     }
 
@@ -79,5 +79,11 @@ function drawAll() {
     slinkHub.updateServer(mySnake);
     mySnake.draw();
 
+    if (remoteSnakes.length === 0) {
+        status.innerText = "Its just you :("
+    }
+    else {
+        status.innerText = remoteSnakes.length + 1 + " snakes connected.";
+    }
     setTimeout(function () { window.requestAnimationFrame(drawAll); }, 1000 / fps);
 }

@@ -4,6 +4,7 @@ const totalWidth = 5000;
 const totalHeight = 5000;
 const canvasId = "canvas";
 const clientName = document.getElementById("clientName");
+const status = document.getElementById("status");
 
 function onLoad() {
     window.addEventListener('contextmenu', function (e) { e.preventDefault(); }, false);
