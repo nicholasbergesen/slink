@@ -41,36 +41,6 @@ namespace Slink
             _broadcaster.RemoveSnake(Context.ConnectionId);
             return base.OnDisconnected(stopCalled);
         }
-
-        public override async Task OnConnected()
-        {
-            await base.OnConnected();
-            Clients.Client(Context.ConnectionId).addSnakes(Broadcaster.Snakes.Values);
-        }
-    }
-
-    public class Snake
-    {
-        public string name { get; set; }
-
-        public double moveX { get; set; }
-
-        public double moveY { get; set; }
-
-        public bool isAccelerating { get; set; }
-
-        public List<Segment> segments { get; set; }
-
-        public bool updated { get; set; }
-
-        public string connectionId { get; set; }
-    }
-
-    public class Segment
-    {
-        public double x { get; set; }
-
-        public double y { get; set; }
     }
 
     public class Broadcaster
@@ -79,7 +49,6 @@ namespace Slink
         private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second, client runs at 24 fps
         private readonly IHubContext _hubContext;
         private readonly Timer _broadcastLoop;
-        public readonly static ConcurrentDictionary<string, Snake> Snakes = new ConcurrentDictionary<string, Snake>();
 
         public Broadcaster()
         {
@@ -89,22 +58,25 @@ namespace Slink
 
         public void BroadcastPositions(object state)
         {
-            var remoteSnakes = Snakes.Values.ToList();
+            var remoteSnakes = Slink.Snakes.Values.ToList();
             if (remoteSnakes.Any())
             {
                 _hubContext.Clients.All.updatePositions(remoteSnakes);
             }
         }
+
         public void UpdatePosition(Snake client)
         {
-            Snakes[client.connectionId] = client;
+            Slink.Snakes[client.connectionId] = client;
         }
 
         internal string Register(Snake client)
         {
-            if (Snakes.TryAdd(client.connectionId, client))
+            var currentSnakes = Slink.Snakes.ToList();
+            if (Slink.Snakes.TryAdd(client.connectionId, client))
             {
                 _hubContext.Clients.AllExcept(client.connectionId).addSnake(client);
+                _hubContext.Clients.Client(client.connectionId).addSnakes(currentSnakes);
                 return client.connectionId;
             }
 
@@ -113,7 +85,7 @@ namespace Slink
 
         internal void RemoveSnake(string connectionId)
         {
-            if(Snakes.TryRemove(connectionId, out _))
+            if(Slink.Snakes.TryRemove(connectionId, out _))
                 _hubContext.Clients.All.removeSnake(connectionId);
         }
 
