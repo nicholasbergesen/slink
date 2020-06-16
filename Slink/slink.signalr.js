@@ -47,7 +47,7 @@ class slinkHubR {
     }
 
     removeSnake(removeSnakeId) {
-        for (var i = 0; i < remoteSnake; i++) {
+        for (var i = 0; i < remoteSnakes; i++) {
             if (remoteSnakes[i].snakeId === removeSnakeId) {
                 remoteSnakes.splice(i, 1);
                 break;

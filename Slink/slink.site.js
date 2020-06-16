@@ -12,9 +12,10 @@ function onLoad() {
     canvas.width = totalWidth;
     canvas.height = totalHeight;
     
-    canvas.onmousemove = (e) => updateCoOrdinates(e);
+    canvas.onmousemove = (e) => updateTouchCoOrdinates(e);
     canvas.onmousedown = (e) => accelerate(e);
     canvas.onmouseup = (e) => normalSpeed(e);
+    canvas.touchstart = (e) => updateCoOrdinates(e);
     clientName.onkeyup = (e) => onKeyUp(e);
     clientName.focus();
 }
@@ -22,6 +23,12 @@ function onLoad() {
 let isUpdating = false;
 let lastX = 0;
 let lastY = 0;
+
+function updateTouchCoOrdinates(event) {
+    if (mySnake != undefined) {
+        mySnake.setMoveDirection(event.pageX, event.pageY);
+    }
+}
 
 function updateCoOrdinates(event) {
     //added a delay to posting updated positions to help

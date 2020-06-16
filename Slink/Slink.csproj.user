@@ -8,7 +8,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
-    <LastActiveSolutionConfig>Release|Any CPU</LastActiveSolutionConfig>
+    <LastActiveSolutionConfig>Debug|x64</LastActiveSolutionConfig>
     <NameOfLastUsedPublishProfile>CustomProfile</NameOfLastUsedPublishProfile>
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
