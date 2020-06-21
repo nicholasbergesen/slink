@@ -40,14 +40,14 @@ class slinkHubR {
     }
 
     addSnakes(newSnakes) {
-        for (var i = 0; i < newSnakes; i++) {
+        for (var i = 0; i < newSnakes.length; i++) {
             let newSnake = newSnakes[i];
             remoteSnakes.push(snake.newRemoteSnake(newSnake.connectionId, newSnake.name, newSnake.segments, newSnake.moveX, newSnake.moveY));
         }
     }
 
     removeSnake(removeSnakeId) {
-        for (var i = 0; i < remoteSnakes; i++) {
+        for (var i = 0; i < remoteSnakes.length; i++) {
             if (remoteSnakes[i].snakeId === removeSnakeId) {
                 remoteSnakes.splice(i, 1);
                 break;

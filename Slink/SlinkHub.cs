@@ -72,6 +72,8 @@ namespace Slink
 
         internal string Register(Snake client)
         {
+            //currentSnakes must be populated before adding new client snake
+            //to prevent sending the client its own snake as a remote snake.
             var currentSnakes = Slink.Snakes.ToList();
             if (Slink.Snakes.TryAdd(client.connectionId, client))
             {
