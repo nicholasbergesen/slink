@@ -47,7 +47,7 @@ namespace Slink
 
         public List<Coord> segments { get; set; }
 
-        public bool updated { get; set; }
+        public int updateCounter { get; set; }
 
         public string connectionId { get; set; }
     }

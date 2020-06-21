@@ -26,7 +26,14 @@ namespace Slink
         public void UpdatePosition(Snake snake)
         {
             snake.connectionId = Context.ConnectionId;
-            snake.updated = true;
+            snake.updateCounter++;
+
+#if debug
+                //delaying client move is also an option.
+                if(snakeClient.updateCounter < 0)
+                    throw new Exception("Increase update frequency, changed direction multiple times without broadcasting to other clients"); 
+#endif
+
             _broadcaster.UpdatePosition(snake);
         }
 
@@ -46,7 +53,7 @@ namespace Slink
     public class Broadcaster
     {
         private readonly static Lazy<Broadcaster> _instance = new Lazy<Broadcaster>(() => new Broadcaster());
-        private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second, client runs at 24 fps
+        private readonly TimeSpan BroadcastInterval = TimeSpan.FromMilliseconds(40); //broadcast maximum of 25 times per second
         private readonly IHubContext _hubContext;
         private readonly Timer _broadcastLoop;
 
@@ -59,10 +66,13 @@ namespace Slink
         public void BroadcastPositions(object state)
         {
             var remoteSnakes = Slink.Snakes.Values.ToList();
-            if (remoteSnakes.Any())
+            if (remoteSnakes.Any(x => x.updateCounter > 0))
             {
                 _hubContext.Clients.All.updatePositions(remoteSnakes);
             }
+
+            foreach (var snakeClient in remoteSnakes)
+                Slink.Snakes[snakeClient.connectionId].updateCounter--;
         }
 
         public void UpdatePosition(Snake client)

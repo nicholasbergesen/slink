@@ -40,6 +40,9 @@ class slinkHubR {
     }
 
     addSnakes(newSnakes) {
+        if (newSnakes === undefined)
+            return;
+
         for (var i = 0; i < newSnakes.length; i++) {
             let newSnake = newSnakes[i];
             remoteSnakes.push(snake.newRemoteSnake(newSnake.connectionId, newSnake.name, newSnake.segments, newSnake.moveX, newSnake.moveY));
@@ -47,6 +50,9 @@ class slinkHubR {
     }
 
     removeSnake(removeSnakeId) {
+        if (remoteSnakes === undefined)
+            return;
+
         for (var i = 0; i < remoteSnakes.length; i++) {
             if (remoteSnakes[i].snakeId === removeSnakeId) {
                 remoteSnakes.splice(i, 1);
